@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct SOTApp: App {
+    @StateObject var manager = SOTManager()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SOTView()
+                .environmentObject(manager)
         }
     }
 }
