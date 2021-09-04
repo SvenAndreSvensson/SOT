@@ -8,11 +8,9 @@
 import SwiftUI
 
 struct ToyView: View {
-    @Environment(\.dismiss) var dismiss
     @EnvironmentObject var manager: SOTManager
    
-    @Binding var toy: Toy
-    @State var deleteFlag = false
+    let toy: Toy
     
     @State private var editData: Toy.Data = Toy.Data()
     @State private var showEditor = false
@@ -38,13 +36,6 @@ struct ToyView: View {
                 NavigationView {
                     
                     ToyDataEditView(toyData: $editData)
-                        .onDisappear(perform: {
-                            /*if deleteFlag {
-                                if let _pIndex = manager.parents.firstIndex(where: {$0.children.contains(child)}), let _index = manager.parents[_pIndex].children.firstIndex(of: child) {
-                                    manager.parents[_pIndex].children.remove(at: _index)
-                                }
-                            }*/
-                        })
                         .toolbar {
                             
                             ToolbarItemGroup(placement: .navigationBarLeading) {
@@ -54,17 +45,14 @@ struct ToyView: View {
                             }
                             ToolbarItemGroup(placement: .navigationBarTrailing) {
                                 Button("Done") {
-                                    //manager.update(child, of: parent, from: editData)
-                                    toy.update(from: editData)
+                                    manager.update(toy, from: editData)
                                     showEditor = false
                                 }
                             }
                             ToolbarItemGroup(placement: .bottomBar) {
                                 Button("Delete") {
-                                    
-                                    deleteFlag = true
+                                    manager.remove(toy)
                                     showEditor = false
-                                    dismiss()
                                 }
                             }
                         } // Toolbar
@@ -76,7 +64,7 @@ struct ToyView: View {
 struct ToyView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView{
-            ToyView(toy: .constant(Toy.data[0]))
+            ToyView(toy: Toy.data[0])
         }
     }
 }

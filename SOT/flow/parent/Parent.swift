@@ -7,10 +7,17 @@
 
 import Foundation
 
+// Data Model
 struct Parent: Identifiable, Equatable {
     var id: UUID
     var name: String
     var children:[Child]
+    
+}
+
+// ViewModel - must have a default value
+extension Parent {
+    
 }
 
 extension Parent {
@@ -18,18 +25,7 @@ extension Parent {
         var name: String = ""
         var children: [Child] = [Child]()
         
-        mutating func delete(indexSet: IndexSet){
-            var itemsToRemove:[Child] = [Child]()
-            indexSet.forEach { index in
-                let _child =  children[index]
-                itemsToRemove.append(_child)
-            }
-            itemsToRemove.forEach { child in
-                let _ = delete(child)
-            }
-        }
-        
-        mutating func delete(_ child: Child) -> Child? {
+        mutating func remove(_ child: Child) -> Child? {
             guard let _index = children.firstIndex(where: { $0.id == child.id}) else {
                 print("Parent.Data: delete: child not found?")
                 return nil

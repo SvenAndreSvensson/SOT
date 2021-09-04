@@ -10,11 +10,6 @@ import SwiftUI
 struct ParentDataEditView: View {
     @Binding var parentData: Parent.Data
     
-    enum Field: Hashable {
-        case name
-        case none
-    }
-    
     @State private var showChildEditor = false
     @State private var newChildData = Child.Data()
     
@@ -27,13 +22,14 @@ struct ParentDataEditView: View {
             }
             
             Section{
-                ForEach($parentData.children){$child in
+                ForEach($parentData.children){ $child in
                     NavigationLink(destination: ChildEditView(child: $child)
                                     .toolbar(content: {
                         ToolbarItemGroup(placement: .bottomBar) {
                             Button("Delete") {
+            
+                                let _ = parentData.remove(child)
                                 showChildEditor = false
-                                let _ = parentData.delete(child)
                             }
                         }
                     })) {
@@ -47,7 +43,7 @@ struct ParentDataEditView: View {
                     }
                 }
                 .onDelete { indexSet in
-                    parentData.delete(indexSet: indexSet)
+                    parentData.children.remove(atOffsets: indexSet)
                 }
                 
                 HStack{

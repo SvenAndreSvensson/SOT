@@ -20,7 +20,6 @@ struct ChildEditView: View {
             Section{
             TextField( "write name", text: $child.name)
                 .style(.textField)
-            
             }
             
             Section{
@@ -29,8 +28,8 @@ struct ChildEditView: View {
                                     .toolbar(content: {
                         ToolbarItemGroup(placement: .bottomBar) {
                             Button("Delete") {
-                                showToyEditor = false
-                                //let _ = childData.delete(toy)
+                                //showToyEditor = false
+                                
                             }
                         }
                     })) {
@@ -43,7 +42,7 @@ struct ChildEditView: View {
                     }
                 }
                 .onDelete { indexSet in
-                    //childData.delete(indexSet: indexSet)
+                    child.toys.remove(atOffsets: indexSet)
                 }
                 
                 HStack{

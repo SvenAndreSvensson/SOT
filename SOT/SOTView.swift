@@ -13,13 +13,16 @@ struct SOTView: View {
     @State private var showEditor: Bool = false
     @State private var newData = Parent.Data()
     
+    
+    
     var body: some View {
         NavigationView {
             ZStack{
                 List{
-                    ForEach($manager.parents){$parent in
+                    ForEach(manager.parents, id: \.id){parent in
                         
-                        NavigationLink(destination: ParentView(parent: $parent)) {
+                        
+                        NavigationLink(destination: ParentView(parent: parent)) {
                             HStack{
                                 Text("Parent")
                                     .style(.label)
@@ -30,7 +33,7 @@ struct SOTView: View {
                         }
                     }
                     .onDelete { indexSet in
-                        manager.parents.remove(atOffsets: indexSet)
+                        manager.remove(atOffsets: indexSet)
                     }
                 } // List
                 
@@ -65,12 +68,7 @@ struct SOTView: View {
                             ToolbarItemGroup(placement: .navigationBarTrailing) {
                                 Button("Add") {
                                     
-                                    let newParent = Parent(
-                                        id: UUID(),
-                                        name: newData.name,
-                                        children: newData.children)
-                                    
-                                    manager.parents.append(newParent)
+                                    manager.append(newData)
                                     showEditor = false
                                     
                                 }

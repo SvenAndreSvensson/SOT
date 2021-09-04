@@ -17,6 +17,14 @@ extension Child {
     struct Data {
         var name: String = ""
         var toys: [Toy] = [Toy]()
+        
+        mutating func remove(_ toy: Toy) -> Toy? {
+            guard let _index = toys.firstIndex(where: { $0.id == toy.id }) else {
+                print("Parent.Data: delete: child not found?")
+                return nil
+            }
+            return toys.remove(at: _index)
+        }
     }
     
     var data: Data { return Data(name: name, toys: toys)}
@@ -25,6 +33,8 @@ extension Child {
         self.name = data.name
         self.toys = data.toys
     }
+    
+    
     
     static var data:[Child] {[
         Child(id: UUID(uuidString: "14E4F450-4EF0-4B8E-AA8D-A41BE698884A")!, name: "Arne", toys: [Toy.data[0], Toy.data[1]]),

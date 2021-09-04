@@ -8,12 +8,9 @@
 import SwiftUI
 
 struct ParentView: View {
-    @Binding var parent: Parent
+    let parent: Parent
     
-    @Environment(\.dismiss) var dismiss
     @EnvironmentObject var manager: SOTManager
-    
-    @State private var deleteFlag: Bool = false
     
     @State private var showEditor = false
     @State private var editData = Parent.Data()
@@ -38,8 +35,8 @@ struct ParentView: View {
                     }
                     
                     Section {
-                        ForEach($parent.children){$child in
-                            NavigationLink(destination: ChildView( child: $child)) {
+                        ForEach(parent.children, id:\.id){child in
+                            NavigationLink(destination: ChildView( child: child)) {
                                 HStack{
                                     Text("Child")
                                         .style(.label)
@@ -50,7 +47,7 @@ struct ParentView: View {
                             }
                         } // ForEach
                         .onDelete { indexSet in
-                            parent.children.remove(atOffsets: indexSet)
+                            manager.remove(atOffsets: indexSet, toChildrenOf: parent)                            
                         }
                         
                         if parent.children.count == 0 {
@@ -64,8 +61,6 @@ struct ParentView: View {
                     } header: { Text("Children") }
                     
                 } // Form
-                
-                
                 
             } // ZStack
             .navigationTitle("Parent")
@@ -98,18 +93,9 @@ struct ParentView: View {
                             }
                             ToolbarItemGroup(placement: .navigationBarTrailing) {
                                 Button("Add") {
-                                    
-                                    let newChild = Child(
-                                        id: UUID(),
-                                        name: newChildData.name,
-                                        toys: newChildData.toys)
-                                    
-                                    parent.children.append(newChild)
-                                    //manager.parents.append(newParent)
+                                    manager.append(newChildData, toChildrenOf: parent)
                                     showChildEditor = false
-                                    
                                 }
-                                
                             }
                         } // toolbar
                 } // NavigationView
@@ -118,14 +104,7 @@ struct ParentView: View {
                 NavigationView {
                     ParentDataEditView(parentData: $editData)
                         .navigationTitle("Edit Parent Data")
-                        .onDisappear(perform: {
-                            print("ParentView: .onDisappear")
-                            if deleteFlag {
-                                if let index = manager.parents.firstIndex(of: parent) {
-                                    manager.parents.remove(at: index)
-                                }
-                            }
-                        })
+                    
                         .toolbar {
                             ToolbarItemGroup(placement: .navigationBarLeading) {
                                 Button("Cancel") {
@@ -134,7 +113,7 @@ struct ParentView: View {
                             }
                             ToolbarItemGroup(placement: .navigationBarTrailing) {
                                 Button("Done") {
-                                    parent.update(from: editData)
+                                    manager.update(parent, from: editData)
                                     showEditor = false
                                 }.disabled(editData.name.isEmpty)
                             }
@@ -149,11 +128,8 @@ struct ParentView: View {
                                         title: Text("Deleting"),
                                         message: Text("Deleting!"),
                                         primaryButton: .destructive(Text("Delete")) {
-                                            
-                                            deleteFlag = true
+                                            manager.remove(parent)
                                             showEditor = false
-                                            dismiss()
-                    
                                         },
                                         secondaryButton: .cancel()
                                     )
@@ -169,7 +145,7 @@ struct ParentView_Previews: PreviewProvider {
     
     static var previews: some View {
         NavigationView {
-        ParentView(parent: .constant(Parent.data[0]))
+        ParentView(parent: Parent.data[0])
         }
     }
 }

@@ -28,7 +28,7 @@ struct ChildDataEditView: View {
                                     .toolbar(content: {
                         ToolbarItemGroup(placement: .bottomBar) {
                             Button("Delete") {
-                                showToyEditor = false
+                                //showToyEditor = false
                                 //let _ = childData.delete(toy)
                             }
                         }
@@ -41,9 +41,8 @@ struct ChildDataEditView: View {
                         }
                     }
                 }
-                
                 .onDelete { indexSet in
-                    //childData.delete(indexSet: indexSet)
+                    childData.toys.remove(atOffsets: indexSet)
                 }
                 
                 HStack{

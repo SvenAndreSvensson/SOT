@@ -8,11 +8,9 @@
 import SwiftUI
 
 struct ChildView: View {
-    @Environment(\.dismiss) var dismiss
     @EnvironmentObject var manager: SOTManager
    
-    @Binding var child: Child
-    @State var deleteFlag = false
+    let child: Child
     
     @State private var editData: Child.Data = Child.Data()
     @State private var showEditor = false
@@ -29,8 +27,8 @@ struct ChildView: View {
                 }
                 
                 Section {
-                    ForEach($child.toys){$toy in
-                        NavigationLink(destination: ToyView( toy: $toy)) {
+                    ForEach(child.toys, id: \.id){toy in
+                        NavigationLink(destination: ToyView( toy: toy)) {
                             HStack{
                                 Text("Toy")
                                     .style(.label)
@@ -41,7 +39,7 @@ struct ChildView: View {
                         }
                     } // ForEach
                     .onDelete { indexSet in
-                        child.toys.remove(atOffsets: indexSet)
+                        manager.remove(atOffsets: indexSet, toToysOf: child)
                     }
                 }
                 
@@ -81,17 +79,9 @@ struct ChildView: View {
                             }
                             ToolbarItemGroup(placement: .navigationBarTrailing) {
                                 Button("Add") {
-                                    
-                                    let newToy = Toy(
-                                        id: UUID(),
-                                        name: newToyData.name)
-                                    
-                                    child.toys.append(newToy)
-                                    //manager.parents.append(newParent)
+                                    manager.append(newToyData, toToysOf: child)
                                     showToyEditor = false
-                                    
                                 }
-                                
                             }
                         } // toolbar
                 } // NavigationView
@@ -101,13 +91,6 @@ struct ChildView: View {
                     
                     ChildDataEditView(childData: $editData)
                         .navigationTitle("Edit Child Data")
-                        .onDisappear(perform: {
-                            if deleteFlag {
-                                if let _pIndex = manager.parents.firstIndex(where: {$0.children.contains(child)}), let _index = manager.parents[_pIndex].children.firstIndex(of: child) {
-                                    manager.parents[_pIndex].children.remove(at: _index)
-                                }
-                            }
-                        })
                         .toolbar {
                             
                             ToolbarItemGroup(placement: .navigationBarLeading) {
@@ -117,17 +100,14 @@ struct ChildView: View {
                             }
                             ToolbarItemGroup(placement: .navigationBarTrailing) {
                                 Button("Done") {
-                                    //manager.update(child, of: parent, from: editData)
-                                    child.update(from: editData)
+                                    manager.update(child, from: editData)
                                     showEditor = false
                                 }
                             }
                             ToolbarItemGroup(placement: .bottomBar) {
                                 Button("Delete") {
-                                    
-                                    deleteFlag = true
+                                    manager.remove(child)
                                     showEditor = false
-                                    dismiss()
                                 }
                             }
                         } // Toolbar
@@ -139,7 +119,7 @@ struct ChildView: View {
 struct ChildView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView{
-            ChildView(child: .constant(Child.data[0]))
+            ChildView(child: Child.data[0])
                 .environmentObject(SOTManager())
         }
     }
