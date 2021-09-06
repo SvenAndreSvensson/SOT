@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Toy: Identifiable, Equatable {
+struct Toy: Identifiable, Equatable, Hashable {
     var id: UUID
     var name: String
 }

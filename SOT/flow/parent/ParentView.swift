@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct ParentView: View {
-    let parent: Parent
+    @Binding var parent: Parent
     
     @EnvironmentObject var manager: SOTManager
+    
+    @State var selectedChild: Child? = nil
     
     @State private var showEditor = false
     @State private var editData = Parent.Data()
@@ -35,16 +37,21 @@ struct ParentView: View {
                     }
                     
                     Section {
-                        ForEach(parent.children, id:\.id){child in
-                            NavigationLink(destination: ChildView( child: child)) {
+                        ForEach($parent.children){$child in
+                            
+                            NavigationLink(destination: ChildView(child: $child), tag: child , selection: $selectedChild) {
                                 HStack{
-                                    Text("Child")
+                                    Text("Child name")
                                         .style(.label)
-                                    Spacer()
                                     Text(child.name)
                                         .style(.text)
                                 }
                             }
+                            
+                           
+                            
+                            
+                            
                         } // ForEach
                         .onDelete { indexSet in
                             manager.remove(atOffsets: indexSet, toChildrenOf: parent)                            
@@ -145,7 +152,8 @@ struct ParentView_Previews: PreviewProvider {
     
     static var previews: some View {
         NavigationView {
-        ParentView(parent: Parent.data[0])
+            ParentView(parent: .constant(Parent.data[0]))
+                .environmentObject(SOTManager())
         }
     }
 }

@@ -10,7 +10,7 @@ import SwiftUI
 struct ChildView: View {
     @EnvironmentObject var manager: SOTManager
    
-    let child: Child
+    @Binding var child: Child
     
     @State private var editData: Child.Data = Child.Data()
     @State private var showEditor = false
@@ -119,7 +119,7 @@ struct ChildView: View {
 struct ChildView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView{
-            ChildView(child: Child.data[0])
+            ChildView(child: .constant(Child.data[0]))
                 .environmentObject(SOTManager())
         }
     }

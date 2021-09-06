@@ -6,19 +6,16 @@
 //
 
 import Foundation
+import SwiftUI
 
 // Data Model
-struct Parent: Identifiable, Equatable {
+struct Parent: Identifiable, Equatable, Hashable {
     var id: UUID
     var name: String
     var children:[Child]
     
 }
 
-// ViewModel - must have a default value
-extension Parent {
-    
-}
 
 extension Parent {
     struct Data {

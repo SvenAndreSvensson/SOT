@@ -13,24 +13,26 @@ struct SOTView: View {
     @State private var showEditor: Bool = false
     @State private var newData = Parent.Data()
     
+    @State var selectedParent: Parent? = nil
     
     
     var body: some View {
         NavigationView {
             ZStack{
                 List{
-                    ForEach(manager.parents, id: \.id){parent in
+                    
+                    ForEach($manager.parents){$parent in
                         
-                        
-                        NavigationLink(destination: ParentView(parent: parent)) {
+                        NavigationLink(destination: ParentView(parent: $parent), tag: parent , selection: $selectedParent) {
                             HStack{
                                 Text("Parent")
                                     .style(.label)
-                                Spacer()
                                 Text(parent.name)
                                     .style(.text)
                             }
                         }
+                        
+                        
                     }
                     .onDelete { indexSet in
                         manager.remove(atOffsets: indexSet)
