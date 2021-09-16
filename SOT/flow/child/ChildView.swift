@@ -10,13 +10,18 @@ import SwiftUI
 struct ChildView: View {
     @EnvironmentObject var manager: SOTManager
    
-    @Binding var child: Child
+    var child: Child
     
-    @State private var editData: Child.Data = Child.Data()
-    @State private var showEditor = false
+    @State private var childData: Child.Data = Child.Data()
+    @State private var editChild = false
     
-    @State private var showToyEditor: Bool = false
+    @State private var editNewToy: Bool = false
     @State private var newToyData = Toy.Data()
+    
+    func addNewToy(){
+        newToyData = Toy.Data()
+        editNewToy = true
+    }
     
     var body: some View {
             
@@ -27,7 +32,7 @@ struct ChildView: View {
                 }
                 
                 Section {
-                    ForEach(child.toys, id: \.id){toy in
+                    ForEach(child.toys){toy in
                         NavigationLink(destination: ToyView( toy: toy)) {
                             HStack{
                                 Text("Toy")
@@ -56,58 +61,60 @@ struct ChildView: View {
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button("Edit") {
-                        editData = child.data
-                        showEditor = true
+                        childData = child.data
+                        editChild = true
                     }
                     
-                    Button(action: {
-                        newToyData = Toy.Data()
-                        showToyEditor = true }) {
-                            Image(systemName: "plus")
-                        }
+                    Button(action: addNewToy ) {
+                        Image(systemName: "plus")
+                    }
                 }
             }
-            .fullScreenCover(isPresented: $showToyEditor) {
+            .fullScreenCover(isPresented: $editNewToy) {
                 NavigationView {
                     ToyDataEditView(toyData: $newToyData)
                         .navigationTitle("New Toy?")
                         .toolbar {
                             ToolbarItemGroup(placement: .navigationBarLeading) {
                                 Button("Dismiss") {
-                                    showToyEditor = false
+                                    editNewToy = false
                                 }
                             }
                             ToolbarItemGroup(placement: .navigationBarTrailing) {
                                 Button("Add") {
                                     manager.append(newToyData, toToysOf: child)
-                                    showToyEditor = false
+                                    
+                                    //let newToy = Toy(id: UUID(), name: childData.name)
+                                    
+                                    //child.toys.append(newToy)
+                                    editNewToy = false
                                 }
                             }
                         } // toolbar
                 } // NavigationView
             } // fullScreenCover
-            .fullScreenCover(isPresented: $showEditor) {
+            .fullScreenCover(isPresented: $editChild) {
                 NavigationView {
                     
-                    ChildDataEditView(childData: $editData)
+                    ChildDataEditView(childData: $childData)
                         .navigationTitle("Edit Child Data")
                         .toolbar {
                             
                             ToolbarItemGroup(placement: .navigationBarLeading) {
                                 Button("Cancel") {
-                                    showEditor = false
+                                    editChild = false
                                 }
                             }
                             ToolbarItemGroup(placement: .navigationBarTrailing) {
                                 Button("Done") {
-                                    manager.update(child, from: editData)
-                                    showEditor = false
+                                    manager.update(child, from: childData)
+                                    editChild = false
                                 }
                             }
                             ToolbarItemGroup(placement: .bottomBar) {
                                 Button("Delete") {
                                     manager.remove(child)
-                                    showEditor = false
+                                    editChild = false
                                 }
                             }
                         } // Toolbar
@@ -119,7 +126,7 @@ struct ChildView: View {
 struct ChildView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView{
-            ChildView(child: .constant(Child.data[0]))
+            ChildView(child: Child.data[0])
                 .environmentObject(SOTManager())
         }
     }

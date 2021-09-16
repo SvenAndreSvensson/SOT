@@ -10,10 +10,11 @@ import SwiftUI
 struct ToyView: View {
     @EnvironmentObject var manager: SOTManager
    
-    let toy: Toy
+    var toy: Toy
     
     @State private var editData: Toy.Data = Toy.Data()
-    @State private var showEditor = false
+    //@State private var editNewToy = false
+    @State private var editToy = false
     
     var body: some View {
             
@@ -28,11 +29,43 @@ struct ToyView: View {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button("Edit") {
                         editData = toy.data
-                        showEditor = true
+                        editToy = true
                     }
+                   /* Button {
+                        editData = Toy.Data()
+                        editNewToy = true
+                    } label: {
+                        Image(systemName: "plus")
+                    }*/
+
+                   
                 }
             }
-            .fullScreenCover(isPresented: $showEditor) {
+           /* .sheet(isPresented: $editNewToy, onDismiss: {}) {
+                NavigationView{
+                    ToyDataEditView(toyData: $editData)
+                        .toolbar {
+                            
+                            ToolbarItem(placement: .navigationBarLeading) {
+                                Button("Dismiss") {
+                                    editNewToy = false
+                                }
+                            }
+                            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                                Button("Add") {
+                                    editNewToy = false
+                                    
+                                    toy =
+                                    //manager.update(toy, from: editData)
+                                    
+                                }
+                            }
+                        
+                        } // Toolbar
+                }
+            }*/
+        
+            .fullScreenCover(isPresented: $editToy) {
                 NavigationView {
                     
                     ToyDataEditView(toyData: $editData)
@@ -40,19 +73,19 @@ struct ToyView: View {
                             
                             ToolbarItemGroup(placement: .navigationBarLeading) {
                                 Button("Cancel") {
-                                    showEditor = false
+                                    editToy = false
                                 }
                             }
                             ToolbarItemGroup(placement: .navigationBarTrailing) {
                                 Button("Done") {
                                     manager.update(toy, from: editData)
-                                    showEditor = false
+                                    editToy = false
                                 }
                             }
                             ToolbarItemGroup(placement: .bottomBar) {
                                 Button("Delete") {
                                     manager.remove(toy)
-                                    showEditor = false
+                                    editToy = false
                                 }
                             }
                         } // Toolbar

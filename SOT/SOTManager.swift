@@ -16,6 +16,9 @@ class SOTManager: ObservableObject{
         }
     }
     
+    func remove(at index:Int){
+        parents.remove(at: index)
+    }
     func remove(atOffsets: IndexSet){
         parents.remove(atOffsets: atOffsets)
     }

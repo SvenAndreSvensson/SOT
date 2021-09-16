@@ -10,20 +10,36 @@ import SwiftUI
 struct SOTView: View {
     @EnvironmentObject var manager: SOTManager
     
-    @State private var showEditor: Bool = false
-    @State private var newData = Parent.Data()
+    @State private var editNewParent: Bool = false
+    @State private var newParentData = Parent.Data()
     
-    @State var selectedParent: Parent? = nil
+   
     
     
     var body: some View {
         NavigationView {
             ZStack{
                 List{
+                    /*
+                    ForEachIndexed($manager.parents) { index, parent in
+                        Text(parent.wrappedValue.name)
+                            .contextMenu(ContextMenu(menuItems: {
+                                VStack {
+                                    Button(action: {
+                                        manager.remove(at: index)
+                                        //self.todoViewModel.deleteAt(index)
+                                    }, label: {
+                                        Label("Delete", systemImage: "trash")
+                                    })
+                                }
+                            }))
+                    }*/
                     
-                    ForEach($manager.parents){$parent in
+                    
+                    
+                    ForEach(manager.parents){parent in
                         
-                        NavigationLink(destination: ParentView(parent: $parent), tag: parent , selection: $selectedParent) {
+                        NavigationLink(destination: ParentView(parent: parent)) {
                             HStack{
                                 Text("Parent")
                                     .style(.label)
@@ -31,6 +47,16 @@ struct SOTView: View {
                                     .style(.text)
                             }
                         }
+                        .contextMenu(ContextMenu(menuItems: {
+                            VStack {
+                                Button(action: {
+                                    manager.remove(parent)
+                                    
+                                }, label: {
+                                    Label("Delete", systemImage: "trash")
+                                })
+                            }
+                        }))
                         
                         
                     }
@@ -41,7 +67,7 @@ struct SOTView: View {
                 
                 if manager.parents.count == 0 {
                     VStack{
-                        Text("No Parents, please add Parent!")
+                        Text("Add parent with the +")
                         Spacer()
                     }
                 }
@@ -51,30 +77,36 @@ struct SOTView: View {
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button(action: {
-                        newData = Parent.Data()
-                        showEditor = true }) {
+                        newParentData = Parent.Data()
+                        editNewParent = true }) {
                             Image(systemName: "plus")
                         }
                 }
             } // toolbar
-            .fullScreenCover(isPresented: $showEditor) {
+            .fullScreenCover(isPresented: $editNewParent) {
                 NavigationView {
-                    ParentDataEditView(parentData: $newData)
+                    ParentDataEditView(parentData: $newParentData)
                         .navigationTitle("New Parent?")
                         .toolbar {
                             ToolbarItemGroup(placement: .navigationBarLeading) {
                                 Button("Dismiss") {
-                                    showEditor = false
+                                    editNewParent = false
                                 }
                             }
                             ToolbarItemGroup(placement: .navigationBarTrailing) {
                                 Button("Add") {
+                                    manager.append(newParentData)
+                                    editNewParent = false
+                                    /*
+                                    let newParent = Parent(id: UUID(), name: newParentData.name, children: newParentData.children)
                                     
-                                    manager.append(newData)
-                                    showEditor = false
+                                     editNewParent = false
+                                    manager.parents.append(newParent)
+                                    */
+                                    
                                     
                                 }
-                                .disabled(newData.name.isEmpty)
+                                .disabled(newParentData.name.isEmpty)
                             }
                         } // toolbar
                 } // NavigationView
