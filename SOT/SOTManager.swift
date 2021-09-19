@@ -43,7 +43,6 @@ class SOTManager: ObservableObject{
             print("SOTManager, remove - Parent Not found!")
             return
         }
-        
         parents[_pIndex].children.remove(at: _cIndex)
     }
     
@@ -63,7 +62,6 @@ class SOTManager: ObservableObject{
             print("SOTManager, remove - Parent Not found!")
             return
         }
-        
         parents[_pIndex].children[_cIndex].toys.remove(at: _tIndex)
     }
     
@@ -136,13 +134,10 @@ class SOTManager: ObservableObject{
         }
     }
     
-    
     static var emptyState: SOTManager {
-        
         let manager = SOTManager()
         manager.parents = []
         return manager
-        
     }
     
     static var fullState: SOTManager {
@@ -150,46 +145,4 @@ class SOTManager: ObservableObject{
         manager.parents = Parent.data
         return manager
     }
-    
-    /*
-    func add(parent:Parent){
-        parents.append(parent)
-    }
-    
-    func removeParent(_ parent: Parent){
-        
-        let index = parents.firstIndex { item in
-            item.id == parent.id
-        }
-        if let index = index {
-
-            parents.remove(at: index)
-        } else {
-            print("HumanManager: removeParent: firstIndex not found")
-        }
-    }
-    func removeParent(_ indexSet: IndexSet){
-        
-        var itemsToRemove:[Parent] = [Parent]()
-        
-        indexSet.forEach { index in
-            itemsToRemove.append(parents[index])
-        }
-        
-        itemsToRemove.forEach { parent in
-            removeParent(parent)
-        }
-    }
-    
-    func removeChild( _ child: Child){
-        if var _parent = parents.first(where: { parent in
-            parent.children.contains { _child in
-                _child.id == child.id
-            }
-        }){
-            if let _index = _parent.children.firstIndex(where: {$0.id == child.id}) {
-                _parent.children.remove(at: _index)
-            }
-        }
-    }*/
 }

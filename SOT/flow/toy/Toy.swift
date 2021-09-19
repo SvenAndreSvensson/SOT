@@ -30,6 +30,9 @@ extension Toy {
     ]}
     
     static var zero: Toy { return Toy(id: UUID.zero, name: "")}
+    
+    /// SF-Symbol
+    static var symbol = "puzzlepiece.extension"
 }
 
 

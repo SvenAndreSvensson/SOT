@@ -8,10 +8,25 @@
 import SwiftUI
 
 struct ParentDataEditView: View {
+    
     @Binding var parentData: Parent.Data
     
-    @State private var showChildEditor = false
+    @State private var presentNewChildData = false
     @State private var newChildData = Child.Data()
+    
+    func editNewChildData(){
+        newChildData = Child.Data()
+        presentNewChildData = true
+    }
+    func createNewChild(){
+        parentData.createChild(by: newChildData)
+        presentNewChildData = false
+    }
+    
+    func removeChild(_ child: Child){
+        presentNewChildData = false
+        parentData.remove(child)
+    }
     
     var body: some View {
         Form {
@@ -23,72 +38,49 @@ struct ParentDataEditView: View {
             
             Section{
                 ForEach($parentData.children){ $child in
-                    NavigationLink(destination: ChildEditView(child: $child)
-                                    .toolbar(content: {
-                        ToolbarItemGroup(placement: .bottomBar) {
-                            Button("Delete") {
-            
-                                let _ = parentData.remove(child)
-                                showChildEditor = false
-                            }
-                        }
-                    })) {
-                        HStack{
-                            Text("Child name")
-                                .style(.label)
-                            Spacer()
-                            Text(child.name)
-                                .style(.text)
-                        }
+                    NavigationLink(
+                        destination: ChildEditView(child: $child)
+                            .background(LinearGradient.editItemColors)
+                            .toolbar(content: {
+                                ToolbarItem(placement: .bottomBar) {
+                                    Button("Delete") { removeChild(child) }
+                                }
+                            }))
+                    {
+                        ListItemView(child)
+                            .contextMenu(ContextMenu(menuItems: {
+                                VStack {
+                                    Button(action: { parentData.remove(child) }, label: {
+                                        Label("Delete", systemImage: "trash")
+                                    })
+                                    .foregroundColor(.red)
+                                }
+                            }))
                     }
                 }
                 .onDelete { indexSet in
                     parentData.children.remove(atOffsets: indexSet)
                 }
                 
-                HStack{
-                    Spacer()
-                    Button {
-                        newChildData = Child.Data()
-                        showChildEditor = true
-                    } label: {
-                        HStack(alignment: VerticalAlignment.firstTextBaseline, spacing: 10) {
-                            Text("Add child")
-                            Image(systemName: "plus")
-                        }
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .disabled(parentData.name.isEmpty)
-                    .padding()
-                    Spacer()
+                Button(action: editNewChildData ) {
+                    ListItemView(symbol: "plus.circle.fill", text: "add child")
                 }
-            }
-            
+                
+            } // Section
+            header: { Text("Children") }
         } // Form
-        .sheet(isPresented: $showChildEditor) {
+        .sheet(isPresented: $presentNewChildData) {
             NavigationView {
                 ChildDataEditView(childData: $newChildData)
-                    .navigationBarTitle("New Child?")
+                    .background(LinearGradient.newItemColors)
+                    .navigationBarTitle("New Child")
                     .toolbar {
-                        ToolbarItemGroup(placement: .navigationBarLeading) {
-                            Button("Dismiss") {
-                                showChildEditor = false
-                            }
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button("Dismiss") { presentNewChildData = false }
                         }
-                        ToolbarItemGroup(placement: .navigationBarTrailing) {
-                            Button("Add") {
-                                
-                                let newChild = Child(
-                                    id: UUID(),
-                                    name: newChildData.name,
-                                    toys: newChildData.toys
-                                )
-                                
-                                parentData.children.append(newChild)
-                                newChildData = Child.Data()
-                                showChildEditor = false
-                            }
-                            .disabled(newChildData.name.isEmpty)
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("Add") { createNewChild() }
+                                .disabled(newChildData.name.isEmpty)
                         }
                     } // toolbar
             } // NavigationView
@@ -99,8 +91,7 @@ struct ParentDataEditView: View {
 struct ParentDataEditView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView{
-        ParentDataEditView(parentData: .constant(Parent.data[0].data))
-            
+            ParentDataEditView(parentData: .constant(Parent.data[0].data))
         }
     }
 }

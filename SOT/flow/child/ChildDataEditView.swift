@@ -11,8 +11,23 @@ struct ChildDataEditView: View {
 
     @Binding var childData: Child.Data
     
-    @State private var showToyEditor = false
-    @State private var newToyData = Toy.Data()
+    @State private var presentToyData = false
+    @State private var toyData = Toy.Data()
+    
+    func editToyData(){
+        toyData = Toy.Data()
+        presentToyData = true
+    }
+    
+    func createToy(){
+        childData.createToy(by: toyData)
+        presentToyData = false
+    }
+    
+    func deleteToy(_ toy: Toy){
+        presentToyData = false
+        childData.deleteToy(toy)
+    }
     
     var body: some View {
         Form {
@@ -23,68 +38,54 @@ struct ChildDataEditView: View {
             
             Section{
                 ForEach($childData.toys){$toy in
-                    NavigationLink(destination: ToyEditView(toy: $toy)
+                    NavigationLink(destination:
+                                    ToyEditView(toy: $toy)
+                                    .background(LinearGradient.editItemColors)
                                     .navigationTitle("Edit Toy")
-                                    .toolbar(content: {
-                        ToolbarItemGroup(placement: .bottomBar) {
-                            Button("Delete") {
-                                //showToyEditor = false
-                                //let _ = childData.delete(toy)
+                                    .toolbar(content:
+                                                {
+                        ToolbarItem(placement: .bottomBar) {
+                            
+                            Button(action: { deleteToy(toy) }) {
+                                Text("Delete")
                             }
+                            .foregroundColor(.red)
                         }
                     })) {
-                        HStack{
-                            Text("Toy name")
-                                .style(.label)
-                            Text(toy.name)
-                                .style(.text)
-                        }
+                        ListItemView(toy)
                     }
+                    .contextMenu(ContextMenu(menuItems: {
+                        VStack {
+                            Button(action: { deleteToy(toy) }, label: {
+                                Label("Delete", systemImage: "trash")
+                            })
+                            .foregroundColor(.red)
+                        }
+                    }))
                 }
                 .onDelete { indexSet in
                     childData.toys.remove(atOffsets: indexSet)
                 }
                 
-                HStack{
-                    Spacer()
-                    Button {
-                        showToyEditor = true
-                    } label: {
-                        HStack(alignment: VerticalAlignment.firstTextBaseline, spacing: 10) {
-                            Text("Add Toy")
-                            Image(systemName: "plus")
-                        }
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .disabled(childData.name.isEmpty)
-                    .padding()
-                    Spacer()
+                Button(action: editToyData) {
+                    ListItemView.addToy()
                 }
+                
+                
             } // Section
             header: { Text("Toys") }
         } // Form
-        .sheet(isPresented: $showToyEditor) {
+        .sheet(isPresented: $presentToyData) {
             NavigationView {
-                ToyDataEditView(toyData: $newToyData)
-                    .navigationBarTitle("New Toy?")
+                ToyDataEditView(toyData: $toyData)
+                    .background(LinearGradient.newItemColors)
+                    .navigationBarTitle("New Toy")
                     .toolbar {
-                        ToolbarItemGroup(placement: .navigationBarLeading) {
-                            Button("Dismiss") {
-                                showToyEditor = false
-                            }
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button(action: { presentToyData = false }, label: { Text("Dismiss") })
                         }
-                        ToolbarItemGroup(placement: .navigationBarTrailing) {
-                            Button("Add") {
-                                
-                                let newToy = Toy(
-                                    id: UUID(),
-                                    name: newToyData.name)
-                                
-                                childData.toys.append(newToy)
-                                newToyData = Toy.Data()
-                                showToyEditor = false
-                            }
-                            .disabled(newToyData.name.isEmpty)
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button(action: createToy, label: { Text("Add") })
                         }
                     } // toolbar
             } // NavigationView

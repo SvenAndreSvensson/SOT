@@ -13,21 +13,29 @@ struct Parent: Identifiable, Equatable, Hashable {
     var id: UUID
     var name: String
     var children:[Child]
-    
 }
-
 
 extension Parent {
     struct Data {
         var name: String = ""
         var children: [Child] = [Child]()
         
-        mutating func remove(_ child: Child) -> Child? {
+        mutating func remove(_ child: Child)  {
             guard let _index = children.firstIndex(where: { $0.id == child.id}) else {
                 print("Parent.Data: delete: child not found?")
-                return nil
+                return
             }
-            return children.remove(at: _index)
+            children.remove(at: _index)
+        }
+        
+        mutating func createChild(by data: Child.Data) {
+            let newChild = Child(
+                id: UUID(),
+                name: data.name,
+                toys: data.toys
+            )
+            
+            children.append(newChild)
         }
     }
     
@@ -49,6 +57,10 @@ extension Parent {
     ]}
     
     static var zero: Parent = Parent(id: UUID.zero, name: "", children: [Child]())
+    
+    /// SF-Symbol
+    static var symbol = "person"
+    
 }
 
 

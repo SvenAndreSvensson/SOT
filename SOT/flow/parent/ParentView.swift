@@ -8,160 +8,134 @@
 import SwiftUI
 
 struct ParentView: View {
-    var parent: Parent
-    
     @EnvironmentObject var manager: SOTManager
     
-    //@State var selectedChild: Child? = nil
+    var parent: Parent
     
+    @State private var presentParentData = false
     @State private var parentData = Parent.Data()
-    @State private var editParent = false
-    @State private var showAlert = false
     
+    @State private var presentNewChildData: Bool = false
     @State private var newChildData = Child.Data()
-    @State private var editNewChild: Bool = false
     
+    func editParent(){
+        parentData = parent.data
+        presentParentData = true
+    }
+    
+    func updateParent(){
+        manager.update(parent, from: parentData)
+        presentParentData = false
+    }
+    
+    func deleteParent(){
+        presentParentData = false
+        manager.remove(parent)
+    }
+    
+    func editNewChildData(){
+        newChildData = Child.Data()
+        presentNewChildData = true
+    }
+    
+    func createNewChild(){
+        manager.append(newChildData, toChildrenOf: parent)
+        presentNewChildData = false
+    }
+
     var body: some View {
         
-            ZStack {
-                Form {
-                    
-                    Section {
-                        HStack{
-                            Text("name")
-                                .style(.label)
-                            Spacer()
-                            Text(parent.name)
-                                .style(.text)
-                        }
-                    }
-                    
-                    Section {
-                        ForEach(parent.children){child in
-                            
-                            NavigationLink(destination: ChildView(child: child)) {
-                                HStack{
-                                    Text("Child name")
-                                        .style(.label)
-                                    Text(child.name)
-                                        .style(.text)
-                                }
-                            }
-                            
-                           
-                        } // ForEach
-                        .onDelete { indexSet in
-                            manager.remove(atOffsets: indexSet, toChildrenOf: parent)                            
-                        }
-                        
-                    
-                        
-                        if parent.children.count == 0 {
-                            VStack{
-                                Text("No children, please create a child!")
-                                    .style(.text)
-                                Spacer()
-                            }
-                        }
-                        
-                    } header: { Text("Children") }
-                    
-                } // Form
+        //ZStack {
+            Form {
                 
-            } // ZStack
-            .navigationTitle("Parent")
-            .toolbar {
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    Button {
-                        parentData = parent.data
-                        editParent = true
+                Section {
+                    HStack{
+                        ListItemView(parent)
+                    }
+                }
+                
+                Section {
+                    ForEach(parent.children){child in
                         
-                    } label: {
-                        Text("Edit" )
+                        NavigationLink(destination: ChildView(child: child)) {
+                            ListItemView(child)
+                        }.contextMenu(ContextMenu(menuItems: {
+                            VStack {
+                                Button(action: { manager.remove(child) }, label: {
+                                    Label("Delete", systemImage: "trash")
+                                })
+                                .foregroundColor(.red)
+                            }
+                        }))
+                        
+                    } // ForEach
+                    .onDelete { indexSet in
+                        manager.remove(atOffsets: indexSet, toChildrenOf: parent)
                     }
                     
-                    Button(action: {
-                        newChildData = Child.Data()
-                        editNewChild = true }) {
-                            Image(systemName: "plus")
-                        }
-                }
-            } // toolbar
-            .fullScreenCover(isPresented: $editNewChild) {
-                NavigationView {
-                    ChildDataEditView(childData: $newChildData)
-                        .navigationTitle("New Child?")
-                        .toolbar {
-                            ToolbarItemGroup(placement: .navigationBarLeading) {
-                                Button("Dismiss") {
-                                    editNewChild = false
-                                }
-                            }
-                            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                                Button("Add") {
-                                    manager.append(newChildData, toChildrenOf: parent)
-                                    editNewChild = false
-                                    
-                                    /*let newChild = Child(id: UUID(), name: newChildData.name, toys: newChildData.toys)
-                                    parent.children.append(newChild)
-                                    editNewChild = false*/
-                                    
-                                }
-                            }
-                        } // toolbar
-                } // NavigationView
-            } // fullScreenCover
-            .fullScreenCover(isPresented: $editParent) {
-                NavigationView {
-                    ParentDataEditView(parentData: $parentData)
-                        .navigationTitle("Edit Parent Data")
+                    Button(action: editNewChildData ) { ListItemView.addChild() }
                     
-                        .toolbar {
-                            ToolbarItemGroup(placement: .navigationBarLeading) {
-                                Button("Cancel") {
-                                    editParent = false
-                                }
-                            }
-                            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                                Button("Done") {
-                                    manager.update(parent, from: parentData)
-                                    editParent = false
-                                    //parent.update(from: parentData)
-                                    
-                                }.disabled(parentData.name.isEmpty)
-                            }
-                            ToolbarItemGroup(placement: .bottomBar) {
-                                Button("Delete") {
-                                    //editParent = true
-                                    showAlert = true
-                                }
+                } header: { Text("Children") }
+                
+            } // Form
+            
+        //} // ZStack
+        .navigationTitle("Parent")
+        .toolbar {
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                
+                Button(action: editParent) {
+                    Text("Edit")
+                }
+                Button(action: editNewChildData) {
+                    Image(systemName: "plus")
+                }
+            }
+        } // toolbar
+        .sheet(isPresented: $presentNewChildData) {
+            NavigationView {
+                ChildDataEditView(childData: $newChildData)
+                    .background(LinearGradient.newItemColors)
+                    .navigationTitle("New Child")
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button("Dismiss") { presentNewChildData = false }
+                        }
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("Add") { createNewChild() }
+                        }
+                    } // toolbar
+            } // NavigationView
+        } // sheet
+        .sheet(isPresented: $presentParentData) {
+            NavigationView {
+                ParentDataEditView(parentData: $parentData)
+                    .background(LinearGradient.editItemColors)
+                    .navigationTitle("Edit Parent Data")
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button("Cancel") { presentParentData = false }
+                        }
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("Done") { updateParent() }
+                                .disabled(parentData.name.isEmpty)
+                        }
+                        ToolbarItem(placement: .bottomBar) {
+                            Button("Delete") { deleteParent() }
                                 .foregroundColor(.red)
-                                .alert(isPresented: $showAlert, content: {
-                                    Alert(
-                                        // TODO: localize
-                                        title: Text("Deleting"),
-                                        message: Text("Deleting!"),
-                                        primaryButton: .destructive(Text("Delete")) {
-                                            
-                                            editParent = false
-                                            manager.remove(parent)
-                                        },
-                                        secondaryButton: .cancel()
-                                    )
-                                })
-                            }
-                        } // toolbar
-                } // NavigationView
-            } // fullScreenCover
+                        }
+                    } // toolbar
+            } // NavigationView
+        } // sheet
     } // body
 } // ParentView
 
 struct ParentView_Previews: PreviewProvider {
-    
     static var previews: some View {
         NavigationView {
             ParentView(parent: Parent.data[0])
                 .environmentObject(SOTManager())
+            
         }
     }
 }

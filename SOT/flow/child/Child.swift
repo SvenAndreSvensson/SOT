@@ -11,6 +11,8 @@ struct Child: Identifiable, Equatable, Hashable {
     var id: UUID
     var name: String
     var toys:[Toy]
+    
+    
 }
 
 extension Child {
@@ -18,22 +20,44 @@ extension Child {
         var name: String = ""
         var toys: [Toy] = [Toy]()
         
-        mutating func remove(_ toy: Toy) -> Toy? {
+        mutating func deleteToy(_ toy: Toy) {
             guard let _index = toys.firstIndex(where: { $0.id == toy.id }) else {
                 print("Parent.Data: delete: child not found?")
-                return nil
+                return
             }
-            return toys.remove(at: _index)
+            toys.remove(at: _index)
+        }
+        
+        mutating func createToy(by data: Toy.Data){
+            let newToy = Toy(
+                id: UUID(),
+                name: data.name)
+            
+            toys.append(newToy)
         }
     }
     
     var data: Data { return Data(name: name, toys: toys)}
+    
+    
+    
     
     mutating func update(from data: Child.Data) {
         self.name = data.name
         self.toys = data.toys
     }
     
+    mutating func createToy(by data: Toy.Data) {
+        let newToy = Toy(id: UUID(), name: data.name)
+        toys.append(newToy)
+    }
+    mutating func removeToy(_ toy: Toy)  {
+        guard let _index = toys.firstIndex(where: { $0.id == toy.id }) else {
+            print("Parent.Data: delete: child not found?")
+            return
+        }
+        toys.remove(at: _index)
+    }
     
     
     static var data:[Child] {[
@@ -43,6 +67,9 @@ extension Child {
     ]}
     
     static var zero: Child { return Child(id: UUID.zero, name: "", toys: [Toy]())}
+    
+    /// SF-Symbol
+    static var symbol = "person"
 }
 
 

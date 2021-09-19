@@ -12,114 +12,112 @@ struct ChildView: View {
    
     var child: Child
     
+    @State private var presentChildData = false
     @State private var childData: Child.Data = Child.Data()
-    @State private var editChild = false
     
-    @State private var editNewToy: Bool = false
+    @State private var presentNewToyData: Bool = false
     @State private var newToyData = Toy.Data()
     
-    func addNewToy(){
+    
+    func editChildData(){
+        childData = child.data
+        presentChildData = true
+    }
+    
+    func updateChild(){
+        manager.update(child, from: childData)
+        presentChildData = false
+    }
+    
+    func deleteChild(){
+        manager.remove(child)
+        presentChildData = false
+    }
+    
+    func editNewToyData(){
         newToyData = Toy.Data()
-        editNewToy = true
+        presentNewToyData = true
+    }
+    
+    func createNewToy(){
+        manager.append(newToyData, toToysOf: child)
+        presentNewToyData = false
     }
     
     var body: some View {
             
             Form {
-                HStack{
-                    Text("Name").style(.label)
-                    Text(child.name).style(.text)
-                }
+                
+                ListItemView(child)
                 
                 Section {
-                    ForEach(child.toys){toy in
+                    ForEach(child.toys){ toy in
                         NavigationLink(destination: ToyView( toy: toy)) {
-                            HStack{
-                                Text("Toy")
-                                    .style(.label)
-                                Spacer()
-                                Text(toy.name)
-                                    .style(.text)
-                            }
+                            ListItemView(toy)
                         }
+                        .contextMenu(ContextMenu(menuItems: {
+                            VStack {
+                                Button(action: { manager.remove(toy) }, label: {
+                                    Label("Delete", systemImage: "trash")
+                                })
+                                .foregroundColor(.red)
+                            }
+                        }))
+                        
                     } // ForEach
+                    
                     .onDelete { indexSet in
                         manager.remove(atOffsets: indexSet, toToysOf: child)
                     }
-                }
-                
-                if child.toys.count == 0 {
-                    VStack{
-                        Text("No toys, please buy a toys for your child!")
-                            .style(.label)
-                        Spacer()
+                    
+                    Button(action: editNewToyData) {
+                        ListItemView.addToy()
                     }
-                }
+                } header: { Text("Toys") }
                 
             } // Form
             .navigationTitle("Child")
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    Button("Edit") {
-                        childData = child.data
-                        editChild = true
-                    }
-                    
-                    Button(action: addNewToy ) {
-                        Image(systemName: "plus")
-                    }
+                    Button(action: editChildData) { Text("Edit") }
+                    Button(action: editNewToyData ) { Image(systemName: "plus") }
                 }
             }
-            .fullScreenCover(isPresented: $editNewToy) {
+            .sheet(isPresented: $presentNewToyData) {
                 NavigationView {
                     ToyDataEditView(toyData: $newToyData)
-                        .navigationTitle("New Toy?")
+                        .background(LinearGradient.newItemColors)
+                        .navigationTitle("New Toy")
                         .toolbar {
-                            ToolbarItemGroup(placement: .navigationBarLeading) {
-                                Button("Dismiss") {
-                                    editNewToy = false
-                                }
+                            ToolbarItem(placement: .navigationBarLeading) {
+                                Button("Dismiss") { presentNewToyData = false }
                             }
-                            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                                Button("Add") {
-                                    manager.append(newToyData, toToysOf: child)
-                                    
-                                    //let newToy = Toy(id: UUID(), name: childData.name)
-                                    
-                                    //child.toys.append(newToy)
-                                    editNewToy = false
-                                }
+                            ToolbarItem(placement: .navigationBarTrailing) {
+                                Button("Add") { createNewToy() }
                             }
                         } // toolbar
                 } // NavigationView
-            } // fullScreenCover
-            .fullScreenCover(isPresented: $editChild) {
+            } // sheet
+            .sheet(isPresented: $presentChildData) {
                 NavigationView {
-                    
                     ChildDataEditView(childData: $childData)
+                        .background(LinearGradient.editItemColors)
                         .navigationTitle("Edit Child Data")
                         .toolbar {
                             
-                            ToolbarItemGroup(placement: .navigationBarLeading) {
-                                Button("Cancel") {
-                                    editChild = false
-                                }
+                            ToolbarItem(placement: .navigationBarLeading) {
+                                Button("Cancel") { presentChildData = false }
                             }
-                            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                                Button("Done") {
-                                    manager.update(child, from: childData)
-                                    editChild = false
-                                }
+                            ToolbarItem(placement: .navigationBarTrailing){
+                                Button("Done") { updateChild() }
                             }
-                            ToolbarItemGroup(placement: .bottomBar) {
-                                Button("Delete") {
-                                    manager.remove(child)
-                                    editChild = false
-                                }
+                            ToolbarItem(placement: .bottomBar) {
+                                Button("Delete") { deleteChild() }
+                                .foregroundColor(.red)
                             }
-                        } // Toolbar
+                        } // toolbar
                 } // NavigationView
-            } // fullScreenCover
+            } // sheet
     } // body
 } 
 

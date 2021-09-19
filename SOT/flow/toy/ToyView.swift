@@ -12,81 +12,50 @@ struct ToyView: View {
    
     var toy: Toy
     
-    @State private var editData: Toy.Data = Toy.Data()
-    //@State private var editNewToy = false
-    @State private var editToy = false
+    @State private var toyData: Toy.Data = Toy.Data()
+    @State private var presentToyData = false
+    
+    func editToyData(){
+        toyData = toy.data
+        presentToyData = true
+    }
+    
+    func updateToy(){
+        presentToyData = false
+        manager.update(toy, from: toyData)
+    }
+    
+    func deletToy(){
+        manager.remove(toy)
+        presentToyData = false
+    }
     
     var body: some View {
             
             Form {
-                HStack{
-                    Text("Name").style(.label)
-                    Text(toy.name).style(.text)
-                }
+                ListItemView(toy)
             }
             .navigationTitle("Toy")
             .toolbar {
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    Button("Edit") {
-                        editData = toy.data
-                        editToy = true
-                    }
-                   /* Button {
-                        editData = Toy.Data()
-                        editNewToy = true
-                    } label: {
-                        Image(systemName: "plus")
-                    }*/
-
-                   
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Edit") { editToyData() }
                 }
             }
-           /* .sheet(isPresented: $editNewToy, onDismiss: {}) {
-                NavigationView{
-                    ToyDataEditView(toyData: $editData)
-                        .toolbar {
-                            
-                            ToolbarItem(placement: .navigationBarLeading) {
-                                Button("Dismiss") {
-                                    editNewToy = false
-                                }
-                            }
-                            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                                Button("Add") {
-                                    editNewToy = false
-                                    
-                                    toy =
-                                    //manager.update(toy, from: editData)
-                                    
-                                }
-                            }
-                        
-                        } // Toolbar
-                }
-            }*/
-        
-            .fullScreenCover(isPresented: $editToy) {
+            .sheet(isPresented: $presentToyData) {
                 NavigationView {
-                    
-                    ToyDataEditView(toyData: $editData)
+                    ToyDataEditView(toyData: $toyData)
+                        .background(LinearGradient.editItemColors)
+                        .navigationTitle("Edit Toy")
                         .toolbar {
-                            
-                            ToolbarItemGroup(placement: .navigationBarLeading) {
-                                Button("Cancel") {
-                                    editToy = false
-                                }
+                            ToolbarItem(placement: .navigationBarLeading) {
+                                Button("Cancel") { presentToyData = false }
                             }
-                            ToolbarItemGroup(placement: .navigationBarTrailing) {
-                                Button("Done") {
-                                    manager.update(toy, from: editData)
-                                    editToy = false
-                                }
+                            ToolbarItem(placement: .navigationBarTrailing) {
+                                Button("Done") { updateToy() }
                             }
-                            ToolbarItemGroup(placement: .bottomBar) {
-                                Button("Delete") {
-                                    manager.remove(toy)
-                                    editToy = false
-                                }
+                            ToolbarItem(placement: .bottomBar) {
+                                Button("Delete") { deletToy() }
+                                .foregroundColor(.red)
                             }
                         } // Toolbar
                 } // NavigationView

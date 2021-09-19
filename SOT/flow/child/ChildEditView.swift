@@ -11,67 +11,86 @@ import SwiftUI
 struct ChildEditView: View {
     @Binding var child: Child
     
-    @State private var showToyEditor = false
+    @State private var presentNewToyData = false
     @State private var newToyData = Toy.Data()
     
+    func editNewToyData(){
+        newToyData = Toy.Data()
+        presentNewToyData = true
+    }
+    func createToy(){
+        presentNewToyData = false
+        child.createToy(by: newToyData)
+    }
+    
     var body: some View {
+        
         Form {
             
             Section{
-            TextField( "write name", text: $child.name)
-                .style(.textField)
+                TextField( "write name", text: $child.name)
+                    .style(.textField)
             }
             
             Section{
+                
                 ForEach($child.toys){$toy in
                     NavigationLink(destination: ToyEditView(toy: $toy)
+                                    .background(LinearGradient.editItemColors)
                                     .toolbar(content: {
                         ToolbarItemGroup(placement: .bottomBar) {
-                            Button("Delete") {
-                                //showToyEditor = false
+                            
+                            Button(action: { child.removeToy(toy) }) {
+                                ListItemView(symbol: "trash", text: "Delete")
                                 
                             }
                         }
                     })) {
-                        HStack{
-                            Text("Toy name")
-                                .style(.label)
-                            Text(toy.name)
-                                .style(.text)
-                        }
+                        ListItemView(toy)
                     }
+                    .contextMenu(ContextMenu(menuItems: {
+                        VStack {
+                            Button(action: { child.removeToy(toy) }, label: {
+                                Label("Delete", systemImage: "trash")
+                            })
+                                .foregroundColor(.red)
+                        }
+                    }))
                 }
                 .onDelete { indexSet in
                     child.toys.remove(atOffsets: indexSet)
                 }
                 
-                HStack{
-                    Spacer()
-                    Button {
-                        showToyEditor = true
-                    } label: {
-                        HStack(alignment: VerticalAlignment.firstTextBaseline, spacing: 10) {
-                            Text("Add Toy")
-                            Image(systemName: "plus")
+                Button(action: editNewToyData) {
+                    ListItemView(symbol: "plus.circle.fill", text: "add toy")
+                }
+                
+            } header: { Text("Toys") } // Section
+            
+        } // Form
+        .sheet(isPresented: $presentNewToyData, onDismiss: {}, content: {
+            NavigationView{
+                ToyDataEditView(toyData: $newToyData)
+                    .background(LinearGradient.newItemColors)
+                    .navigationTitle("New toy")
+                    .toolbar {
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button("Dismiss"){ presentNewToyData = false }
+                        }
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button("Add"){ createToy() }
                         }
                     }
-                    .buttonStyle(.borderedProminent)
-                    .disabled(child.name.isEmpty)
-                    .padding()
-                    Spacer()
-                }
             }
-            
-        }
+        })
         .navigationTitle("Edit Child")
     } // body
 } 
 
 struct ChildEditView_Previews: PreviewProvider {
-    
     static var previews: some View {
         NavigationView{
-        ChildEditView(child: .constant(Child.data[0]))
+            ChildEditView(child: .constant(Child.data[0]))
         }
     }
 }

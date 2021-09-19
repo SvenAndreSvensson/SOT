@@ -10,107 +10,72 @@ import SwiftUI
 struct SOTView: View {
     @EnvironmentObject var manager: SOTManager
     
-    @State private var editNewParent: Bool = false
+    @State private var presentNewParentData: Bool = false
     @State private var newParentData = Parent.Data()
     
-   
+    func editNewParentData(){
+        newParentData = Parent.Data()
+        presentNewParentData = true
+    }
     
+    func createParent(){
+        manager.append(newParentData)
+        presentNewParentData = false
+    }
     
     var body: some View {
         NavigationView {
-            ZStack{
-                List{
-                    /*
-                    ForEachIndexed($manager.parents) { index, parent in
-                        Text(parent.wrappedValue.name)
-                            .contextMenu(ContextMenu(menuItems: {
-                                VStack {
-                                    Button(action: {
-                                        manager.remove(at: index)
-                                        //self.todoViewModel.deleteAt(index)
-                                    }, label: {
-                                        Label("Delete", systemImage: "trash")
-                                    })
-                                }
-                            }))
-                    }*/
-                    
-                    
-                    
-                    ForEach(manager.parents){parent in
-                        
-                        NavigationLink(destination: ParentView(parent: parent)) {
-                            HStack{
-                                Text("Parent")
-                                    .style(.label)
-                                Text(parent.name)
-                                    .style(.text)
-                            }
-                        }
-                        .contextMenu(ContextMenu(menuItems: {
-                            VStack {
-                                Button(action: {
-                                    manager.remove(parent)
-                                    
-                                }, label: {
-                                    Label("Delete", systemImage: "trash")
-                                })
-                            }
-                        }))
-                        
-                        
-                    }
-                    .onDelete { indexSet in
-                        manager.remove(atOffsets: indexSet)
-                    }
-                } // List
+            
+            List{
                 
-                if manager.parents.count == 0 {
-                    VStack{
-                        Text("Add parent with the +")
-                        Spacer()
+                ForEach(manager.parents){parent in
+                    
+                    NavigationLink(destination: ParentView(parent: parent)) {
+                        ListItemView(parent)
                     }
+                    .contextMenu(ContextMenu(menuItems: {
+                        VStack {
+                            Button(action: { manager.remove(parent) }, label: {
+                                Label("Delete", systemImage: "trash")
+                            })
+                        }
+                    }))
+                    
+                } // ForEach
+                .onDelete { indexSet in
+                    manager.remove(atOffsets: indexSet)
                 }
                 
-            } // ZStack
+                Button(action: editNewParentData) {
+                    ListItemView(symbol: "plus.circle.fill", text: "add parent")
+                }
+                
+            } // List
+            
             .navigationTitle("Parents")
             .toolbar {
                 ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        newParentData = Parent.Data()
-                        editNewParent = true }) {
-                            Image(systemName: "plus")
-                        }
+                    Button(action: editNewParentData) {
+                        Image(systemName: "plus")
+                    }
                 }
             } // toolbar
-            .fullScreenCover(isPresented: $editNewParent) {
+            .sheet(isPresented: $presentNewParentData) {
                 NavigationView {
                     ParentDataEditView(parentData: $newParentData)
-                        .navigationTitle("New Parent?")
+                        .background(LinearGradient.newItemColors)
+                        .navigationTitle("New Parent")
                         .toolbar {
                             ToolbarItemGroup(placement: .navigationBarLeading) {
-                                Button("Dismiss") {
-                                    editNewParent = false
-                                }
+                                Button("Dismiss") { presentNewParentData = false }
                             }
                             ToolbarItemGroup(placement: .navigationBarTrailing) {
-                                Button("Add") {
-                                    manager.append(newParentData)
-                                    editNewParent = false
-                                    /*
-                                    let newParent = Parent(id: UUID(), name: newParentData.name, children: newParentData.children)
-                                    
-                                     editNewParent = false
-                                    manager.parents.append(newParent)
-                                    */
-                                    
-                                    
-                                }
-                                .disabled(newParentData.name.isEmpty)
+                                Button("Add") { createParent() }
+                                    .disabled(newParentData.name.isEmpty)
                             }
                         } // toolbar
                 } // NavigationView
-            } // fullScreenCover
+            } // sheet
         } // NavigationView
     } // body
 }
@@ -121,10 +86,12 @@ struct SOTView_Previews: PreviewProvider {
             SOTView()
                 .previewDisplayName("EmptyState")
                 .environmentObject(SOTManager.emptyState)
+                .preferredColorScheme(.dark)
             
             SOTView()
                 .previewDisplayName("FullState")
                 .environmentObject(SOTManager.fullState)
+                .preferredColorScheme(.light)
         }
     }
 }

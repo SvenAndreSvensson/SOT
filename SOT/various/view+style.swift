@@ -43,7 +43,8 @@ extension View {
         case .smallText:
             self.font(.subheadline).foregroundColor(.secondary)
         case .textField:
-            self.font(.body).foregroundColor(.secondary).textFieldStyle(RoundedBorderTextFieldStyle()).disableAutocorrection(true)
+            self.font(.body).foregroundColor(.secondary).disableAutocorrection(true)
+                // .textFieldStyle(RoundedBorderTextFieldStyle())
         case .collumHeader:
             self.font(.caption2).foregroundColor(.secondary)
         
