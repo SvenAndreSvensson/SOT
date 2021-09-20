@@ -9,7 +9,7 @@ import SwiftUI
 
 @main
 struct SOTApp: App {
-    @StateObject var manager = SOTManager()
+    @StateObject var manager = SOTManager(parents: Parent.data)
     
     init(){
         // so it's possible to have a color on views with a List

@@ -16,6 +16,9 @@ class SOTManager: ObservableObject{
         }
     }
     
+    init(){}
+    init(parents: [Parent]){ self.parents = parents }
+    
     func remove(at index:Int){
         parents.remove(at: index)
     }

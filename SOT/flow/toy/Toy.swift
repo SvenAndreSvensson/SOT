@@ -24,9 +24,9 @@ extension Toy {
     }
     
     static var data:[Toy] {[
-        Toy(id: UUID(uuidString: "C7EEEE90-77A2-4590-8A81-054298178DA3")!, name: "Toy one"),
-        Toy(id: UUID(uuidString: "5358A934-9AD5-4CF7-9AED-944FC1E95C4B")!, name: "Toy two"),
-        Toy(id: UUID(uuidString: "71A202C5-DA07-44F1-81EA-E028A09D8567")!, name: "Toy three"),
+        Toy(id: UUID(uuidString: "C7EEEE90-77A2-4590-8A81-054298178DA3")!, name: "Nunchaku"),
+        Toy(id: UUID(uuidString: "5358A934-9AD5-4CF7-9AED-944FC1E95C4B")!, name: "Knife"),
+        Toy(id: UUID(uuidString: "71A202C5-DA07-44F1-81EA-E028A09D8567")!, name: "Math"),
     ]}
     
     static var zero: Toy { return Toy(id: UUID.zero, name: "")}

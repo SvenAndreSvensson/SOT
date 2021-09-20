@@ -7,7 +7,6 @@
 
 import SwiftUI
 
-
 struct ChildEditView: View {
     @Binding var child: Child
     

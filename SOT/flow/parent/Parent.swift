@@ -48,12 +48,11 @@ extension Parent {
     
     static var data: [Parent] {
     [
-        Parent(id: UUID(uuidString: "5D61566D-8239-4F16-B84C-D659D25249B6")!, name: "Parent one",
+        Parent(id: UUID(uuidString: "5D61566D-8239-4F16-B84C-D659D25249B6")!, name: "Bruce",
                children: [Child.data[0], Child.data[1]]),
-        Parent(id: UUID(uuidString: "3455749B-ED54-45E4-937D-3A46C3461F92")!, name: "Parent two",
-               children: [Child.data[1], Child.data[2]]),
-        Parent(id: UUID(uuidString: "ACB8CEB6-9B37-4855-9799-56510771B534")!, name: "Parent three",
-               children: [Child.data[0], Child.data[2]]),
+        Parent(id: UUID(uuidString: "3455749B-ED54-45E4-937D-3A46C3461F92")!, name: "Steve Jobs",
+               children: [Child.data[2]]),
+        
     ]}
     
     static var zero: Parent = Parent(id: UUID.zero, name: "", children: [Child]())

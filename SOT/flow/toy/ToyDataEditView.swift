@@ -17,14 +17,13 @@ struct ToyDataEditView: View {
                 .style(.textField)
             
         }
-     
     } // body
 }
 
 struct ToyDataEditView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView{
-        ToyDataEditView(toyData: .constant(Toy.data[0].data))
+            ToyDataEditView(toyData: .constant(Toy.data[0].data))
         }
     }
 }
