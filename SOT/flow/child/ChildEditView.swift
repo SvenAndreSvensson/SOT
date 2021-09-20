@@ -18,8 +18,8 @@ struct ChildEditView: View {
         presentNewToyData = true
     }
     func createToy(){
-        presentNewToyData = false
         child.createToy(by: newToyData)
+        presentNewToyData = false
     }
     
     var body: some View {
@@ -38,7 +38,6 @@ struct ChildEditView: View {
                                     .background(LinearGradient.editItemColors)
                                     .toolbar(content: {
                         ToolbarItemGroup(placement: .bottomBar) {
-                            
                             Button(action: { child.removeToy(toy) }) {
                                 ListItemView(symbol: "trash", text: "Delete")
                                 
@@ -67,7 +66,7 @@ struct ChildEditView: View {
             } header: { Text("Toys") } // Section
             
         } // Form
-        .sheet(isPresented: $presentNewToyData, onDismiss: {}, content: {
+        .sheet(isPresented: $presentNewToyData, onDismiss: { print("dis") }, content: {
             NavigationView{
                 ToyDataEditView(toyData: $newToyData)
                     .background(LinearGradient.newItemColors)

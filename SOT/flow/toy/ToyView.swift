@@ -21,8 +21,8 @@ struct ToyView: View {
     }
     
     func updateToy(){
-        presentToyData = false
         manager.update(toy, from: toyData)
+        presentToyData = false
     }
     
     func deletToy(){
