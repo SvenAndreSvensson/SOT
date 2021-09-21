@@ -5,9 +5,7 @@
 `Date` 20 september 2021
 
 I have come across some challenges with SwiftUI I can not get past.
-I am struggling with two-way binding in nested arrays. 
-
-This example has grown a little bigger than necessary as I have tried to solve the challenge in countless ways. The error with Index out of range starts where you want to edit a parent element. 
+I am struggling with nested ForEach two-way bindings
 
 1. `Error` Index out of range
 2. `?` Loses current position when a change is made
@@ -69,3 +67,8 @@ The current result is that you are brought all the way back to the parent. This 
 6. Tap Done button
   </div>
 </div>
+
+  <br/>
+  <br/>
+  <br/>
+<em>This example has grown a little bigger than necessary as I have tried to solve the challenge in countless ways. The error with Index out of range starts where you want to edit a parent element.</em>
