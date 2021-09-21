@@ -71,4 +71,4 @@ The current result is that you are brought all the way back to the parent. This 
   <br/>
   <br/>
   <br/>
-<em>This example has grown a little bigger than necessary as I have tried to solve the challenge in countless ways. The error with Index out of range starts where you want to edit a parent element.</em>
+<em>This example has grown a little bigger than necessary as I have tried to solve the challenge in countless ways. Sorry</em>
