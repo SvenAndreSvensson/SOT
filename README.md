@@ -23,7 +23,7 @@ Structural description, <em>hope this is understandable, yes ...</em>
 ```Swift
 ForEach($parentData.children){$child in 
   ForEach($child.toys){$toy in 
-    // new item is added at this level
+    // Index out out of range -> when a new toy is added to toys
   }
 }
 ```
