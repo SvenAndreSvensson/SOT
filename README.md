@@ -18,12 +18,22 @@ With this I try to create a more real life example, in real life you have more l
 <img align="left" src="https://user-images.githubusercontent.com/31440186/133977167-e8e9c9ba-a682-472d-aeb8-5c05853a4eaa.MP4" width="222" >
 
 # 1 `Error` Index out of range  
-the video on the left shows this error, it happens when you add a toy to a child's bound list of toys, the child is bound to its parent's children list. the problem occurs in the second level.
 
-<p style="color:blue;">To reproduce the error, do the following:</p>
+This error occurs in the second level as I choose to call it, that is, when an element is added to an array, which in turn is part of a structure that is an element in another array. Alle the elements have a two-way binding with their array
+
+Structural description, <em>hope this is understandable, yes ...</em>
+```Swift
+ForEach($parentData.children){$child in 
+  ForEach($child.toys){$toy in 
+    // new item is added at this level
+  }
+}
+```
+
 <div>
   <div width="20px" align="left">
 <div>
+  <em><b>To reproduce the error, do the following:</b></em><br/>
 1. Select a parent<br/>
 2. Edit parent<br/>
 3. Select a child<br/>
