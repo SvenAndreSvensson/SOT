@@ -35,7 +35,7 @@ ForEach($parentData.children){$child in
 1. Select a parent<br/>
 2. Edit parent<br/>
 3. Select a child<br/>
-4. Add toy<br/>
+4. Add a toy<br/>
 5. Enter a name and tap Add button<br/>
   </div>
 </div>
