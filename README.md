@@ -17,7 +17,7 @@ I am struggling with nested ForEach two-way bindings
 
 # 1 `Error` Index out of range  
 
-This error occurs in the second level as I choose to call it, that is, when an element is added to an array, which in turn is part of a structure that is an element in another array. Alle the elements have a two-way binding with their array
+This error occurs in the second level as I choose to call it, that is, when an element is added to an array, which in turn is part of a structure that is an element in another array.
 
 Structural description, <em>hope this is understandable, yes ...</em>
 ```Swift
