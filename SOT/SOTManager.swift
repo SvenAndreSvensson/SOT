@@ -10,11 +10,6 @@ import Foundation
 
 class SOTManager: ObservableObject{
     @Published var parents: [Parent] = [Parent]()// Parent.data
-    {
-        didSet{
-            print("SOTManager.parents - changed")
-        }
-    }
     
     init(){}
     init(parents: [Parent]){ self.parents = parents }
@@ -22,9 +17,11 @@ class SOTManager: ObservableObject{
     func remove(at index:Int){
         parents.remove(at: index)
     }
+    
     func remove(atOffsets: IndexSet){
         parents.remove(atOffsets: atOffsets)
     }
+    
     func remove(_ parent: Parent){
         guard let _pIndex = parents.firstIndex(where: {$0.id == parent.id}) else {
             print("SOTManager, remove - Parent Not found!")
@@ -40,6 +37,7 @@ class SOTManager: ObservableObject{
         }
         parents[_pIndex].children.remove(atOffsets: atOffsets)
     }
+    
     func remove(_ child: Child){
         guard let _pIndex = parents.firstIndex(where: {$0.children.contains(child) }),
         let _cIndex = parents[_pIndex].children.firstIndex(where: { $0.id == child.id }) else {

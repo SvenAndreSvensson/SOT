@@ -42,44 +42,41 @@ struct ParentView: View {
         manager.append(newChildData, toChildrenOf: parent)
         presentNewChildData = false
     }
-
+    
     var body: some View {
         
-        //ZStack {
-            Form {
-                
-                Section {
-                    HStack{
-                        ListItemView(parent)
-                    }
+        Form {
+            
+            Section {
+                HStack{
+                    ListItemView(parent)
+                }
+            }
+            
+            Section {
+                ForEach(parent.children){child in
+                    
+                    NavigationLink(destination: ChildView(child: child)) {
+                        ListItemView(child)
+                    }.contextMenu(ContextMenu(menuItems: {
+                        VStack {
+                            Button(action: { manager.remove(child) }, label: {
+                                Label("Delete", systemImage: "trash")
+                            })
+                                .foregroundColor(.red)
+                        }
+                    }))
+                    
+                } // ForEach
+                .onDelete { indexSet in
+                    manager.remove(atOffsets: indexSet, toChildrenOf: parent)
                 }
                 
-                Section {
-                    ForEach(parent.children){child in
-                        
-                        NavigationLink(destination: ChildView(child: child)) {
-                            ListItemView(child)
-                        }.contextMenu(ContextMenu(menuItems: {
-                            VStack {
-                                Button(action: { manager.remove(child) }, label: {
-                                    Label("Delete", systemImage: "trash")
-                                })
-                                .foregroundColor(.red)
-                            }
-                        }))
-                        
-                    } // ForEach
-                    .onDelete { indexSet in
-                        manager.remove(atOffsets: indexSet, toChildrenOf: parent)
-                    }
-                    
-                    Button(action: editNewChildData ) { ListItemView.addChild() }
-                    
-                } header: { Text("Children") }
+                Button(action: editNewChildData ) { ListItemView.addChild() }
                 
-            } // Form
+            } header: { Text("Children") }
             
-        //} // ZStack
+        } // Form
         .navigationTitle("Parent")
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
@@ -118,11 +115,11 @@ struct ParentView: View {
                         }
                         ToolbarItem(placement: .navigationBarTrailing) {
                             Button("Done") { updateParent() }
-                                .disabled(parentData.name.isEmpty)
+                            .disabled(parentData.name.isEmpty)
                         }
                         ToolbarItem(placement: .bottomBar) {
                             Button("Delete") { deleteParent() }
-                                .foregroundColor(.red)
+                            .foregroundColor(.red)
                         }
                     } // toolbar
             } // NavigationView

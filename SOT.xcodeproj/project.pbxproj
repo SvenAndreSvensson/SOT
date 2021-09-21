@@ -25,7 +25,6 @@
 		2634DCB626DA184A001E8DE4 /* ToyEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2634DCB526DA184A001E8DE4 /* ToyEditView.swift */; };
 		2634DCB826DA1858001E8DE4 /* ToyDataEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2634DCB726DA1858001E8DE4 /* ToyDataEditView.swift */; };
 		2634DCBA26DA1D59001E8DE4 /* UUID+zero.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2634DCB926DA1D59001E8DE4 /* UUID+zero.swift */; };
-		26E5E7CB26F352B80005A053 /* ForEachIndexed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E5E7CA26F352B70005A053 /* ForEachIndexed.swift */; };
 		26E5E7CF26F362180005A053 /* ListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E5E7CE26F362180005A053 /* ListItemView.swift */; };
 		26E5E7D126F762600005A053 /* LinearGradient+predefined.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E5E7D026F762600005A053 /* LinearGradient+predefined.swift */; };
 /* End PBXBuildFile section */
@@ -50,7 +49,6 @@
 		2634DCB526DA184A001E8DE4 /* ToyEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToyEditView.swift; sourceTree = "<group>"; };
 		2634DCB726DA1858001E8DE4 /* ToyDataEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToyDataEditView.swift; sourceTree = "<group>"; };
 		2634DCB926DA1D59001E8DE4 /* UUID+zero.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UUID+zero.swift"; sourceTree = "<group>"; };
-		26E5E7CA26F352B70005A053 /* ForEachIndexed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForEachIndexed.swift; sourceTree = "<group>"; };
 		26E5E7CE26F362180005A053 /* ListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListItemView.swift; sourceTree = "<group>"; };
 		26E5E7D026F762600005A053 /* LinearGradient+predefined.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LinearGradient+predefined.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -140,7 +138,6 @@
 			children = (
 				2634DCAE26D940FE001E8DE4 /* view+style.swift */,
 				2634DCB926DA1D59001E8DE4 /* UUID+zero.swift */,
-				26E5E7CA26F352B70005A053 /* ForEachIndexed.swift */,
 				26E5E7CE26F362180005A053 /* ListItemView.swift */,
 				26E5E7D026F762600005A053 /* LinearGradient+predefined.swift */,
 			);
@@ -230,7 +227,6 @@
 			files = (
 				2634DCB226DA182A001E8DE4 /* Toy.swift in Sources */,
 				2634DCAA26D935B3001E8DE4 /* ParentDataEditView.swift in Sources */,
-				26E5E7CB26F352B80005A053 /* ForEachIndexed.swift in Sources */,
 				2634DCA826D93521001E8DE4 /* ChildEditView.swift in Sources */,
 				2634DCAC26D93616001E8DE4 /* ChildDataEditView.swift in Sources */,
 				2634DCB826DA1858001E8DE4 /* ToyDataEditView.swift in Sources */,
