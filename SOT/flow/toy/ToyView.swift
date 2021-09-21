@@ -59,7 +59,7 @@ struct ToyView: View {
                             }
                         } // Toolbar
                 } // NavigationView
-            } // fullScreenCover
+            } // screen
     } // body
 } 
 
