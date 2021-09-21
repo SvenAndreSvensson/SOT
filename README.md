@@ -5,12 +5,12 @@
 `Date` 20 september 2021
 
 I have come across some challenges with SwiftUI I can not get past.
-I am struggling with two-way binding in arrays, and all the examples I have found only has one level. 
-With this I try to create a more real life example, in real life you have more levels. So this model has a published array of parents, a parent has a array of children, a child has a array of toys. You can add, edit and delete on all levels. 
+I am struggling with two-way binding in nested arrays. 
+
+This example has grown a little bigger than necessary as I have tried to solve the challenge in countless ways. The error with Index out of range starts where you want to edit a parent element. 
 
 1. `Error` Index out of range
 2. `?` Loses current position when a change is made
-
 
 ---
 
